@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .startGameButton{
+            display: none
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="TrapRemix">Music :)</button>
+    <h1 id="title">Among Us Sussy Sussy<img src="Images/CyanCrewmate.png" alt="Cyan Crewmate" style="width:70px;height:auto" ></h1>
+    <p id="dialouge">Enter your name below to get started. (Max 15 Players) </p>
+    <input id="inputId" type = "text"><button id="usernameButton">Go!</button>
+    <p>Players</p>
+    <ol>
+
+    </ol>
+
+    <button id="startGameButton">Start Game</button>
+    <input type="radio" id="choiceOne" name="actionChoice" value="One">
+    <label for="choiceOne"> A </label><br>
+    <input type="radio" id="choiceTwo" name="actionChoice" value="Two">
+    <label for="choiceTwo"> B </label><br>
+    <input type="radio" id="choiceThree" name="actionChoice" value="Three">
+    <label for="choiceThree"> C </label>
+    <button id="continueButton">Continue</button>
+
+    <img id="RoleImages" src="Images/CrewmateImage.jpg" width="1000" height="auto">
+
+
+    <script>
+        const colors = ["Yellow", "Red", "Blue", "Cyan", "Green", "Purple", "Orange","White","Black", "Brown","Pink", "Lime Green", "Grey", "Marroon", "Rainbow"];
+        const playerNames = []
+        const tasksLeft = []
+        const isHiding = []
+        let colorCount = 0;
+        let names = 0;
+        let labelA = document.getElementsByTagName('label')[0];
+        let labelB = document.getElementsByTagName('label')[1];
+        let labelC = document.getElementsByTagName('label')[2];
+        document.getElementById("RoleImages").style.display = "none";
+        document.getElementById("startGameButton").style.display = "none";
+        document.getElementById("continueButton").style.display = "none";
+        document.getElementById("choiceOne").style.display = "none";
+        document.getElementById("choiceTwo").style.display = "none";
+        document.getElementById("choiceThree").style.display = "none";
+        labelA.style.display = "none";
+        labelB.style.display = "none";
+        labelC.style.display = "none";
+        let meetingDialouge = "";
+        function addToList(player){
+            
+            let playerAdded = document.createElement("li");
+            playerAdded.textContent = player;
+            let playerList = document.querySelector("ol");
+            playerList.appendChild(playerAdded);
+            if(playerList.childElementCount > 3){
+                document.getElementById("startGameButton").style.display = "block";
+            }
+        }
+
+        function getUsername(){
+            let inputElm = document.querySelector("input");
+            //Plus Color here or somewhere else
+            playerNames.push(inputElm.value)
+            tasksLeft.push(2);
+            isHiding.push(false);
+            addToList(inputElm.value + getColor());
+            colorCount+= 1;
+            inputElm.value = "";
+        }
+        function getColor(){
+            return " (" + colors[colorCount] + ")";
+        }
+
+        let buttonElm = document.getElementById("usernameButton");
+        buttonElm.onclick = getUsername;
+        let startGameBut = document.getElementById("startGameButton");
+        startGameBut.onclick = startGame;
+        let continueBut = document.getElementById("continueButton");
+        continueBut.onclick = seeRole;
+        document.getElementById("TrapRemix").onclick = playMusic;
+        let randomNumber = 0;
+        let round = 1;
+        
+        let sabatogeFixers = 0;
+        let callSabatoge = false;
+        let isSabatoge = false;
+        let killColor = "";
+        let imposterAlive = true;
+        let killCount = 0; 
+        //labelA.innerHtml = 'New-Text';
+        function playMusic(){
+            new Audio('Sounds/AmongUsDrip.mp3').play()
+        }
+
+        function startGame(){
+            document.getElementById("title").textContent = "SHHHHHHHH!";
+            document.getElementById("dialouge").textContent = "There is One Imposter Among Us! \n I will now tell you guys your roles individually.";
+            document.getElementById("usernameButton").style.display = "none";
+            document.getElementById("inputId").style.display = "none";
+            startGameBut.style.display = "none";
+            document.getElementById("continueButton").style.display = "block";
+            randomNumber = Math.floor(Math.random() * playerNames.length);
+            
+        }
+        function seeRole(){
+            let name = playerNames[names];
+            if(names < playerNames.length){
+            document.getElementById("RoleImages").style.display = "none";
+            document.getElementById("title").textContent = "Please Give the Computer to " + name;
+            document.getElementById("dialouge").textContent = name + " I will now tell you your role Do NOT let anyone else see this please click Continue when you are ready";
+            }
+            else{
+                document.getElementById("RoleImages").style.display = "none";
+                document.getElementById("title").textContent = "Ok Now Everyone Knows There Roles Lets Go"
+                document.getElementById("dialouge").textContent = "Press Continue"
+            }
+            if(randomNumber === names && names < playerNames.length){
+                continueBut.onclick = youAreImposter;
+            }
+            else if (names < playerNames.length){
+                continueBut.onclick = youAreCrewmate;
+            }
+            else{
+                continueBut.onclick = howToPlay;
+            }
+            
+            names += 1;
+        }
+        function youAreCrewmate(){
+            document.getElementById("title").textContent = "You Are A Crewmate!"
+            document.getElementById("RoleImages").src = "Images/CrewmateImage.jpg";
+            document.getElementById("RoleImages").style.display = "block";
+            continueBut.onclick = seeRole;
+        }
+        function youAreImposter(){
+            document.getElementById("title").textContent = "You are THE IMPOSTER!";
+            document.getElementById("RoleImages").src = "Images/ImposterImage.jpg";
+            document.getElementById("RoleImages").style.display = "block";
+            continueBut.onclick = seeRole;
+        }
+        function howToPlay(){
+            names = 0;
+            document.getElementById("title").textContent = "How to Play"
+            document.getElementById("dialouge").textContent = "The Game will be played on a turn basis. Every Turn Crewmates can either A) Do Tasks or B) Hide from the imposter. Each Crewmate has 3 Tasks and if everyone finishes their Tasks they Win! If they choose to Hide from the Imposter and if the imposter chooses to Kill them that round they will not die and live. They will also get to see who the imposter is since they hid from them. The Imposter can do 1 of Three things each turn A) Fake Tasks B) Kill Someone or C) Sabatoge Reactor. The Imposter wins if they Kill Everyone or the Sabatoge is Successful. When the Imposter Sabatoges, at Least Two people must choose to fix the Sabatoge next turn or else the Imposter wins. At the end of each Round, there will be an emergency meeting. Here players can discuss with eachother and try and vote out the imposter.";
+            continueBut.onclick = gameLoop;
+        }
+        function gameLoop(){
+            if(names < playerNames.length){
+            document.getElementById("title").textContent = "Round: " + round;
+            document.getElementById("dialouge").textContent = "Up Next it is " + playerNames[names] + "'s turn Please Give them the Computer";
+            continueBut.onclick = actionQuestion;
+            }
+            else{
+                meeting();
+            }
+        }
+        function actionQuestion(){
+            if(names === randomNumber){
+                tasksLeft[randomNumber] = 0;
+                document.getElementById("dialouge").textContent = "You Are the Imposter! What would you Like to do"
+                document.getElementById("choiceOne").style.display = "block";
+                document.getElementById("choiceTwo").style.display = "block";
+                document.getElementById("choiceThree").style.display = "block";
+                labelA.style.display = "block";
+                labelB.style.display = "block";
+                labelC.style.display = "block";
+                labelA.innerHTML = 'Kill Crewmate'
+                labelB.innerHTML = 'Sabatoge'
+                labelC.innerHTML = 'Fake Tasks'
+                continueBut.onclick = imposterAction;
+            }
+            else{
+                document.getElementById("dialouge").textContent = "You Are a Crewmate! What would you Like to do"
+                document.getElementById("choiceOne").style.display = "block";
+                document.getElementById("choiceTwo").style.display = "block";
+                document.getElementById("choiceThree").style.display = "block";
+                labelA.style.display = "block";
+                labelB.style.display = "block";
+                labelC.style.display = "block";
+                labelA.innerHTML = 'Do Tasks'
+                labelB.innerHTML = 'Hide From Imposter'
+                labelC.innerHTML = 'Fix Sabatoge'
+                continueBut.onclick = crewmateAction;
+            }
+        }
+        function imposterAction(){
+            if(document.getElementById("choiceOne").checked === true)
+            {
+                //If Kill Crewmate was selected Prompt the user to ask what crewmate to kill
+                killPlayerPrompt();
+                names += 1;
+                clearButtons();
+            }
+            else if(document.getElementById("choiceTwo").checked === true){
+                callSabatoge = true;
+                names += 1;
+                clearButtons();
+            }
+            else{
+                names += 1;
+                clearButtons();
+            }
+            gameLoop();
+        }
+        function crewmateAction(){
+            if(document.getElementById("choiceOne").checked === true){
+                tasksLeft[names] -= 1;
+                names += 1;
+                clearButtons();
+            }
+            else if(document.getElementById("choiceTwo").checked === true){
+                isHiding[names] = true;
+                names += 1;
+                clearButtons();
+            }
+            else{
+            sabatogeFixers += 1;
+            names += 1;
+            clearButtons();
+            }
+            gameLoop();
+        }
+        function clearButtons(){
+            document.getElementById("choiceOne").checked = false;
+            document.getElementById("choiceTwo").checked = false;
+            document.getElementById("choiceThree").checked = false;
+            document.getElementById("choiceOne").style.display = "none";
+            document.getElementById("choiceTwo").style.display = "none";
+            document.getElementById("choiceThree").style.display = "none";
+            labelA.style.display = "none";
+            labelB.style.display = "none";
+            labelC.style.display = "none";
+        }
+        function killPlayerPrompt(){
+            killColor = prompt("Please Enter the Color of the Person you want to Kill");
+        }
+        function killPlayer(color){
+            if(color === killColor){
+            removePlayerFromDom(playerNames[colors.indexOf(color)]);
+            playerNames.splice(colors.indexOf(color), 1, "Dead Body!");    
+            killCount+= 1;
+            if(colors.indexOf(color) === randomNumber){
+                imposterAlive = false;
+            }
+            //document.querySelector("ol").removeChild(document.querySelector("ol").childNodes[color]);
+
+            meetingDialouge += color + " was killed! ";
+
+            }
+        }
+        function removePlayerFromDom(text){
+            const li = [...document.querySelectorAll("li")];
+            li.forEach(elem => {
+                if (elem.innerText == text) elem.parentNode.removeChild(elem);
+             });
+}
+        function tasksAreDone(){
+            for(let i = 0; i < tasksLeft.length; i++){
+                if(tasksLeft[i] > 0){
+                    return false;
+                }
+            }
+            return true;
+        }
+        function meeting(){
+            document.getElementById("title").textContent = "Meeting!"
+            colors.forEach(killPlayer);
+            document.getElementById("dialouge").textContent = meetingDialouge;
+            if(playerNames.length - killCount < 3){
+                meetingDialouge = "The Imposter Has Killed Everyone!";
+                imposterWins();
+            }
+            else if(isSabatoge === true && sabatogeFixers < 2){
+                meetingDialouge = "The Sabatoge was Successful Imposter Wins!";
+                imposterWins();
+            }
+            else if(isSabatoge === true){
+                meetingDialouge += " Reactor Has been stabilized. "
+                isSabatoge = false;
+            }
+            sabatogeFixers = 0;
+            if(imposterAlive === false){
+                meetingDialouge = "Imposter Has Died!";
+                crewmatesWin();
+            }
+            else if(tasksAreDone() === true){
+                meetingDialouge = "Crewmates Have Finished Their Tasks!";
+                crewmatesWin();            
+            }
+            if(callSabatoge === true){
+                document.getElementById("dialouge").textContent = meetingDialouge + " THE IMPOSTER HAS SABATOGED REACTOR TWO PEOPLE MUST FIX IT. If reactor is not fixed next round Imposter will win";
+                isSabatoge === true;
+            }
+                meetingDialouge = "";
+                continueBut.onclick = voting;
+            
+
+            //Sabatoges and Check to see if All Tasks are done
+            //Display if won or lost
+            //If not win or lost go to voting
+            //Kill voted out player
+            //Check if Imposter is still in game
+            //Display
+        }
+        function voting(){
+            document.getElementById("title").textContent = "Discuss! Who Is the Imposter?"
+            document.getElementById("dialouge").textContent = "Vote Amongst Yourselves. If one person has majority of the votes write their color when its time to vote. Write skip if you do not want to vote for anyone."
+            document.querySelector("ol").style.display = "none";
+            document.querySelector("ol").style.display = "block";
+            continueBut.onclick = voteDecided;
+            
+        }
+        function voteDecided(){
+            killPlayerPrompt();
+            colors.forEach(killPlayer);
+            meetingOver();
+        }
+        function meetingOver(){
+            //If imposter was killed during the meeting Display if won
+            if(imposterAlive === false){
+                meetingDialouge = "Imposter Has Been Voted Out!"
+                crewmatesWin();
+            }
+            document.getElementById("dialouge").textContent = meetingDialouge
+            meetingDialouge = "";
+            //Else continue the game
+            names = 0;
+            round += 1;
+            continueBut.onclick = gameLoop;
+        }
+        function crewmatesWin(){
+            document.getElementById("title").textContent = "Crewmates Wins";
+            document.getElementById("dialouge").textContent = meetingDialouge;
+            continueBut.style.display = "none";
+        }
+        function imposterWins(){
+            document.getElementById("title").textContent = "Imposter Wins";
+            document.getElementById("dialouge").textContent = meetingDialouge;
+            continueBut.style.display = "none";
+        }
+    </script>
+</body>
+</html>
